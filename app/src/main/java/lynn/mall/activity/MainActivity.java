@@ -85,6 +85,10 @@ public class MainActivity extends FragmentActivity {
                 switchFragment(tempFragment, baseFragment);
             }
         });
+
+        BaseFragment baseFragment = getFragment(0);
+        switchFragment(tempFragment, baseFragment);
+
     }
 
     /**
