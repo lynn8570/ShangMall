@@ -8,8 +8,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
 import lynn.mall.R;
 import lynn.mall.base.BaseFragment;
+import lynn.mall.bean.ResultBeanData;
+import lynn.mall.utils.Constant;
+import okhttp3.Call;
 
 /**
  * Created by zowee-laisc on 2018/6/26.
@@ -22,6 +29,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     private TextView tv_message_home;
     private RecyclerView rv_home;
     private ImageView ib_top;
+
+    //返回的数据
+    private ResultBeanData.ResultBean resultBean;
 
     @Override
     public View initView() {
@@ -44,7 +54,53 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     public void initData() {
         super.initData();
         Log.e(TAG, "主页面的Fragment的数据被初始化了");
+
+        getDataFromNet();
     }
+
+    private void getDataFromNet() {
+        String url = Constant.HOME_URL;
+        OkHttpUtils
+                .get()
+                .url(url)
+                .build()
+                .execute(new StringCallback() {
+
+                    /**
+                     * 请求失败的时候回调
+                     * @param call
+                     * @param e
+                     * @param id
+                     */
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+
+                        Log.e(TAG, "首页请求失败==" + e.getMessage());
+                    }
+
+                    /**
+                     * 当请求成功的时候回调
+                     * @param response 请求成功数据
+                     * @param id
+                     */
+                    @Override
+                    public void onResponse(String response, int id) {
+
+                        Log.e(TAG, "首页请求成功==" + response);
+                        //解析数据
+                        processData(response);
+                    }
+                });
+    }
+
+    private void processData(String json) {
+
+        //使用FastJson去解析Json数据，将json字符串转换成一个ResultBeanData对象
+        ResultBeanData resultBeanData = JSON.parseObject(json, ResultBeanData.class);
+        resultBean = resultBeanData.getResult();
+        Log.e(TAG, "解析成功==" + resultBean.getHot_info().get(0).getName());
+    }
+
 
     @Override
     public void onClick(View view) {
