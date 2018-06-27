@@ -44,7 +44,7 @@ public class MainActivity extends FragmentActivity {
         ButterKnife.bind(this);
 
         Log.i("linlian", "rgMain =" + rgMain);//butterknife 导入出错，
-       
+
         //初始化Fragment
         initFragment();
         //设置RadioGroup的监听
